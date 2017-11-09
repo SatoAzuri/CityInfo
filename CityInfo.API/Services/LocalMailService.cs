@@ -17,8 +17,8 @@ namespace CityInfo.API.Services
         }
        
 
-        private string _mailTo = "admin@mycompany.com";
-        private string _mailFrom = "noreply@mycompany.com";
+        private string _mailTo = "13bony13@gmail.com.com";
+        private string _mailFrom = "tatiana.anderson@cix.csi.cuny.edu.com";
         
 
         public void Send(string to, string subject, string body)

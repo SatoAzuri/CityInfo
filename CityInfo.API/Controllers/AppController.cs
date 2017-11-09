@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using CityInfo.API.Models;
 using CityInfo.API.ViewModels;
 using CityInfo.API.Services;
+using CityInfo.API.Validation;
+using FluentValidation;
+using FluentValidation.Results;
 
 namespace CityInfo.API.Controllers
 {
@@ -24,7 +27,7 @@ namespace CityInfo.API.Controllers
         [HttpGet("contact")]
         public IActionResult Contact()
         {
-            ViewBag.Title = "Contact US";
+            ViewBag.Title = "Create Crew";
             
             //throw new InvalidOperationException("Bad thing mis coming");
             return View();
@@ -32,11 +35,16 @@ namespace CityInfo.API.Controllers
         [HttpPost("contact")]
         public IActionResult Contact(ContactViewModel model)
         {
+            Valid valid = new Valid();
+            ValidationResult results = valid.Validate(model);
+            bool validationSucceeded = results.IsValid;
+            IList<ValidationFailure> failures = results.Errors;
+
             if (string.IsNullOrEmpty(model.Member1) && string.IsNullOrEmpty(model.Member2))
             {
                 var validationMessage = "Please provide at least one member.";
                 ModelState.AddModelError("Member1", validationMessage);
-                ModelState.AddModelError("Member2", validationMessage);                
+                ModelState.AddModelError("Member2", validationMessage);
             }
             if (model.Member1 == model.Member2)
             {
@@ -44,20 +52,16 @@ namespace CityInfo.API.Controllers
                 ModelState.AddModelError("Member1", validationMessage);
                 ModelState.AddModelError("Member2", validationMessage);
             }
-
-
-
-            if (model.Reason=="Other" && string.IsNullOrEmpty(model.Comment))
+            if (model.Reason == "Other")
             {
-                var validationMessage = "Please provide a comment reason 'Other'";
-                ModelState.AddModelError("Comment", validationMessage);               
-
+                var validationMessage = "Please provide a comment for reason 'Other'";
+                ModelState.AddModelError("Comment", validationMessage);
             }
 
             if (ModelState.IsValid)
             {
                 //send email
-                _mailService.Send("ddd@ddd.com", model.Reason, $"From: {model.Boss} - {model.Email}, Message: {model.Comment}");
+                _mailService.Send("13bony13@gmail.com.com", model.Reason, $"From: {model.Boss} - {model.Email}, Message: {model.Comment}");
                 ViewBag.UserMessage = "Mail Sent";
                 ModelState.Clear();
             }
